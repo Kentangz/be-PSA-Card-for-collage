@@ -1,8 +1,7 @@
 "use client";
 
 import { FaUser } from "react-icons/fa";
-import { useEffect, useState } from "react";
-import Link from "next/link";
+import { useState } from "react";
 import { GoSignOut } from "react-icons/go";
 
 export default function ProfileMenu() {
