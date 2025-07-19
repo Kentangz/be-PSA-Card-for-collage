@@ -34,7 +34,7 @@ export default function Input({ label, name, type, placeholder, required = false
     />
     <label
       htmlFor={name}
-      className={`absolute text-neutral-400 ${isFilled ? "text-sm -top-3 left-2 px-2" : "top-2 left-2"} bg-neutral-900 peer-focus:text-sm peer-focus:-top-3 peer-focus:left-2 peer-focus:px-2 transition-all cursor-text`}
+      className={`absolute text-neutral-700 dark:text-neutral-400 ${isFilled ? "text-sm -top-3 left-2 px-2" : "top-2 left-2"} bg-neutral-50 dark:bg-neutral-900 peer-focus:text-sm peer-focus:-top-3 peer-focus:left-2 peer-focus:px-2 transition-all cursor-text`}
     >
       {label}
     </label>
