@@ -4,13 +4,19 @@ import ProfileMenu from "@/app/components/profile-menu"
 import Sidebar from "@/app/components/sidebar"
 import UserNotification from "@/app/components/user-notification"
 import { ImHome } from "react-icons/im"
+import { MdAssignmentAdd } from "react-icons/md";
 
 const menu = [
   {
     title: "home",
     link: "/dashboard",
     icon: ImHome
-  }
+  },
+  {
+    title: "create submission",
+    link: "/dashboard/submission",
+    icon: MdAssignmentAdd
+  },
 ]
 
 export default function UserDashboardLayout({ children }: { children: React.ReactNode }) {
