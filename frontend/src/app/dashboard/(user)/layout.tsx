@@ -4,7 +4,7 @@ import ProfileMenu from "@/app/components/profile-menu"
 import Sidebar from "@/app/components/sidebar"
 import UserNotification from "@/app/components/user-notification"
 import { ImHome } from "react-icons/im"
-import { MdAssignmentAdd } from "react-icons/md";
+import { MdAssignmentAdd, MdTrackChanges } from "react-icons/md";
 
 const menu = [
   {
@@ -16,6 +16,11 @@ const menu = [
     title: "create submission",
     link: "/dashboard/submission",
     icon: MdAssignmentAdd
+  },
+  {
+    title: "tracking",
+    link: "/dashboard/tracking",
+    icon: MdTrackChanges
   },
 ]
 
