@@ -30,7 +30,7 @@ export default function Input({ label, name, type, placeholder, required = false
       placeholder={placeholder}
       required={required}
       onKeyUp={handleType}
-      className="w-full h-10 px-2 outline-none border border-neutral-700 rounded peer"
+      className="w-full h-10 px-2 outline-none border border-neutral-200 dark:border-neutral-700 rounded peer"
     />
     <label
       htmlFor={name}

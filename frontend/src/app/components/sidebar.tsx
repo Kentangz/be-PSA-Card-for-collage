@@ -33,7 +33,7 @@ export default function Sidebar({ menu }: SidebarType) {
           <Link
             key={i}
             href={item.link}
-            className={`flex items-center gap-2 hover:bg-neutral-200 dark:hover:bg-neutral-700 mb-1 p-2 rounded ${pathname === item.link && "bg-neutral-700"}`}
+            className={`flex items-center gap-2 hover:bg-neutral-200 dark:hover:bg-neutral-700 mb-1 p-2 rounded ${pathname === item.link && "bg-neutral-200 dark:bg-neutral-700"}`}
           >
             <item.icon className="text-xl" /> {item.title}
           </Link>

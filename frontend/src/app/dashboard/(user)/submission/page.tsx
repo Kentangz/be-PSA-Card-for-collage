@@ -24,7 +24,7 @@ export default function Submission() {
         <Input type="number" label="Year" name="name" required={true} />
         <Input type="text" label="Brand" name="brand" required={true} />
         <Input type="text" label="Serial Number" name="serial_number" required={true} />
-        <select name="grade_target" className="bg-neutral-900 border border-neutral-700 rounded outline-none h-10 px-1">
+        <select name="grade_target" className="dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded outline-none h-10 px-1">
           <option>Grade Target</option>
           <option value="A">A</option>
           <option value="B">B</option>
@@ -39,7 +39,7 @@ export default function Submission() {
             </div>
           ))
         }
-        <label htmlFor="picture" className="px-2 border border-neutral-700 flex items-center rounded w-[700px] h-10 gap-2 justify-center hover:bg-neutral-800">
+        <label htmlFor="picture" className="px-2 border border-neutral-200 dark:border-neutral-700 flex items-center rounded w-[700px] h-10 gap-2 justify-center hover:bg-neutral-100 dark:hover:bg-neutral-800">
           <LuUpload />Upload Picture
         </label>
         <input type="file" name="image" onChange={handleFileChange} id="picture" className="hidden" />
