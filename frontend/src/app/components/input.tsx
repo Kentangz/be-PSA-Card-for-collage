@@ -7,11 +7,13 @@ interface InputType {
   name: string,
   label?: string,
   placeholder?: string,
-  required?: boolean
+  required?: boolean,
+  disabled?: boolean,
+  defaultValue?: string
 }
 
-export default function Input({ label, name, type, placeholder, required = false }: InputType) {
-  const [isFilled, setIsFilled] = useState<boolean>(false)
+export default function Input({ label, name, type, placeholder, required = false, defaultValue, disabled = false }: InputType) {
+  const [isFilled, setIsFilled] = useState<boolean>(defaultValue ? true : false)
 
   const handleType = (e: KeyboardEvent) => {
     const value = (e.target as HTMLInputElement).value;
@@ -30,7 +32,9 @@ export default function Input({ label, name, type, placeholder, required = false
       placeholder={placeholder}
       required={required}
       onKeyUp={handleType}
-      className="w-full h-10 px-2 outline-none border border-neutral-200 dark:border-neutral-700 rounded peer"
+      defaultValue={defaultValue}
+      disabled={disabled}
+      className="w-full h-10 px-2 outline-none border border-neutral-200 dark:border-neutral-700 rounded peer disabled:border-neutral-800"
     />
     <label
       htmlFor={name}
