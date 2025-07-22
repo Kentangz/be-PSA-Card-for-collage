@@ -9,10 +9,11 @@ interface InputType {
   placeholder?: string,
   required?: boolean,
   disabled?: boolean,
-  defaultValue?: string
+  defaultValue?: string,
+  error?: string
 }
 
-export default function Input({ label, name, type, placeholder, required = false, defaultValue, disabled = false }: InputType) {
+export default function Input({ label, name, type, placeholder, required = false, defaultValue, disabled = false, error }: InputType) {
   const [isFilled, setIsFilled] = useState<boolean>(defaultValue ? true : false)
 
   const handleType = (e: KeyboardEvent) => {
@@ -24,23 +25,26 @@ export default function Input({ label, name, type, placeholder, required = false
     }
   }
 
-  return <div className="relative">
-    <input
-      type={type}
-      id={name}
-      name={name}
-      placeholder={placeholder}
-      required={required}
-      onKeyUp={handleType}
-      defaultValue={defaultValue}
-      disabled={disabled}
-      className="w-full h-10 px-2 outline-none border border-neutral-200 dark:border-neutral-700 rounded peer disabled:border-neutral-800"
-    />
-    <label
-      htmlFor={name}
-      className={`absolute text-neutral-700 dark:text-neutral-400 ${isFilled ? "text-sm -top-3 left-2 px-2" : "top-2 left-2"} bg-neutral-50 dark:bg-neutral-900 peer-focus:text-sm peer-focus:-top-3 peer-focus:left-2 peer-focus:px-2 transition-all cursor-text`}
-    >
-      {label}
-    </label>
+  return <div>
+    <div className="relative">
+      <input
+        type={type}
+        id={name}
+        name={name}
+        placeholder={placeholder}
+        required={required}
+        onKeyUp={handleType}
+        defaultValue={defaultValue}
+        disabled={disabled}
+        className={`w-full h-10 px-2 outline-none border ${error ? "border-red-500" : "border-neutral-200 dark:border-neutral-700"} rounded peer disabled:border-neutral-800`}
+      />
+      {error && <p className="text-sm text-red-500 my-1">{error}</p>}
+      <label
+        htmlFor={name}
+        className={`absolute text-neutral-700 dark:text-neutral-400 ${isFilled ? "text-sm -top-3 left-2 px-2" : "top-2 left-2"} bg-neutral-50 dark:bg-neutral-900 peer-focus:text-sm peer-focus:-top-3 peer-focus:left-2 peer-focus:px-2 transition-all cursor-text`}
+      >
+        {label}
+      </label>
+    </div>
   </div>
 }

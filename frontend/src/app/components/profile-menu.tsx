@@ -3,10 +3,23 @@
 import { FaUser } from "react-icons/fa";
 import { useState } from "react";
 import { GoSignOut } from "react-icons/go";
+import axios from "axios";
+import { useRouter } from "next/navigation";
 
 export default function ProfileMenu() {
   const [profileMenu, setProfileMenu] = useState(false);
-  const [name, setName] = useState("admin")
+  const [name, setName] = useState("admin");
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    const data = await axios.get('/api/auth/logout')
+      .then(response => {
+        if (response.status == 200) {
+          router.push("signin");
+        }
+        return response.data;
+      })
+  }
 
   return <div className="relative">
     <button onClick={() => setProfileMenu(!profileMenu)}
@@ -28,7 +41,7 @@ export default function ProfileMenu() {
       {/*   <FaUser /> */}
       {/*   View Profile */}
       {/* </Link> */}
-      <button className="hover:bg-red-500/20 flex items-center gap-2 w-full p-2 rounded cursor-pointer text-sm"><GoSignOut />Sign out</button>
+      <button onClick={handleLogout} className="hover:bg-red-500/20 flex items-center gap-2 w-full p-2 rounded cursor-pointer text-sm"><GoSignOut />Sign out</button>
     </div>
   </div>
 }
