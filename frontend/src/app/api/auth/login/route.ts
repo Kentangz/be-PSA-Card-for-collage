@@ -24,8 +24,11 @@ export async function POST(req: NextRequest) {
     });
 
     return response;
-  } catch (error) {
-    return NextResponse.json(error);
+  } catch (error: any) {
+    return NextResponse.json(
+      { message: error?.response?.data?.message || "Login failed" },
+      { status: error?.response?.status || 500 }
+    );
   }
 }
 

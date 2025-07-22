@@ -9,7 +9,7 @@ interface InputType {
   placeholder?: string,
   required?: boolean,
   disabled?: boolean,
-  defaultValue?: string,
+  defaultValue?: string | null,
   error?: string
 }
 
