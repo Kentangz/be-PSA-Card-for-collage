@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string("brand");
             $table->string("serial_number");
             $table->string("grade_target");
+            $table->string("grade")->nullable();
             $table->timestamps();
         });
     }

@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(res.data);
   } catch (error: any) {
     return NextResponse.json(
-      { message: error?.response?.data?.errors || "failed to send email" },
+      { message: error?.response?.data?.message || "failed to submit card" },
       { status: error?.response?.status || 500 }
     );
   }

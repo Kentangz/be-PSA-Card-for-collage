@@ -18,7 +18,7 @@ const menu = [
     icon: MdAssignmentAdd
   },
   {
-    title: "tracking",
+    title: "track submission",
     link: "/dashboard/tracking",
     icon: MdTrackChanges
   },

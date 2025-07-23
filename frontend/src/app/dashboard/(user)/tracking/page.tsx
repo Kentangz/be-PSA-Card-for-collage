@@ -1,6 +1,8 @@
+import { getCurrentUserCard } from "@/actions/card"
+import formatDate from "@/utils/format-date";
 import Link from "next/link"
-import { AiFillEye } from "react-icons/ai"
 import { BsEye } from "react-icons/bs"
+import { CardType } from "../page";
 
 const fields = [
   {
@@ -25,45 +27,9 @@ const fields = [
   },
 ]
 
-const tableData = [
-  {
-    name: "kartu 1",
-    serial_number: 111112,
-    verified_grade: "-",
-    status: "submitted",
-    submitted_at: "21 jul 2025"
-  },
-  {
-    name: "kartu 2",
-    serial_number: 111113,
-    verified_grade: "-",
-    status: "Accepted",
-    submitted_at: "21 jul 2025"
-  },
-  {
-    name: "kartu 3",
-    serial_number: 111113,
-    verified_grade: "-",
-    status: "in process",
-    submitted_at: "21 jul 2025"
-  },
-  {
-    name: "kartu 4",
-    serial_number: 111113,
-    verified_grade: "A",
-    status: "done",
-    submitted_at: "21 jul 2025"
-  },
-  {
-    name: "kartu 5",
-    serial_number: 111113,
-    verified_grade: "B",
-    status: "done",
-    submitted_at: "21 jul 2025"
-  },
-]
+export default async function Tracking() {
+  const cards = await getCurrentUserCard();
 
-export default function Tracking() {
   return <div>
     <h4 className="mb-4 text-lg">Tracking</h4>
     <div className="flex">
@@ -78,13 +44,15 @@ export default function Tracking() {
             </tr>
           </thead>
           <tbody className="text-neutral-800 dark:text-neutral-100">
-            {tableData.map((item: Record<string, string | number>, index: number) => (
+            {cards?.data.map((item: CardType, index: number) => (
               <tr key={index}>
-                {fields.map(field => {
-                  return <td className="py-3 px-6 whitespace-nowrap" key={field.name}>{item[field.name]}</td>
-                })}
+                <td className="py-3 px-6 whitespace-nowrap">{item.name}</td>
+                <td className="py-3 px-6 whitespace-nowrap">{item.serial_number}</td>
+                <td className="py-3 px-6 whitespace-nowrap">{item.grade ? item.grade : "-"}</td>
+                <td className="py-3 px-6 whitespace-nowrap">{item.latest_status.status}</td>
+                <td className="py-3 px-6 whitespace-nowrap">{formatDate(new Date(item.created_at))}</td>
                 <td className="py-3 px-6 whitespace-nowrap flex justify-center text-xl text-blue-400">
-                  <Link href={"/dashboard/tracking/1"}>
+                  <Link href={"/dashboard/tracking/" + item.id}>
                     <BsEye />
                   </Link>
                 </td>

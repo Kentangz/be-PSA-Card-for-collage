@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Grade;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -16,8 +17,23 @@ class DatabaseSeeder extends Seeder
         // User::factory(10)->create();
 
         User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+            'name' => 'admin',
+            'email' => 'admin@example.com',
+            'phone_number' => '+62123456789',
+            'role' => 'admin',
+            'password' => 'rahasia'
+        ]);
+
+        Grade::factory()->create([
+            "grade" => "A"
+        ]);
+
+        Grade::factory()->create([
+            "grade" => "B"
+        ]);
+
+        Grade::factory()->create([
+            "grade" => "C"
         ]);
     }
 }

@@ -1,3 +1,6 @@
+import { getCurrentUserCard } from "@/actions/card";
+import formatDate from "@/utils/format-date";
+
 const fields = [
   {
     label: "Name",
@@ -25,59 +28,27 @@ const fields = [
   },
   {
     label: "Submitted at",
-    name: "submitted_at",
+    name: "created_at",
   },
 ]
 
-const tableData = [
-  {
-    name: "kartu 1",
-    year: 2001,
-    brand: "toyota",
-    serial_number: 111112,
-    grade_target: "A",
-    status: "submitted",
-    submitted_at: "21 jul 2025"
-  },
-  {
-    name: "kartu 1",
-    year: 2001,
-    brand: "toyota",
-    serial_number: 111113,
-    grade_target: "A",
-    status: "accepted",
-    submitted_at: "21 jul 2025"
-  },
-  {
-    name: "kartu 1",
-    year: 2001,
-    brand: "toyota",
-    serial_number: 111114,
-    grade_target: "A",
-    status: "in process",
-    submitted_at: "21 jul 2025"
-  },
-  {
-    name: "kartu 1",
-    year: 2001,
-    brand: "toyota",
-    serial_number: 111115,
-    grade_target: "A",
-    status: "done",
-    submitted_at: "21 jul 2025"
-  },
-  {
-    name: "kartu 1",
-    year: 2001,
-    brand: "toyota",
-    serial_number: 111116,
-    grade_target: "A",
-    status: "done",
-    submitted_at: "21 jul 2025"
-  }
-]
+export type CardType = {
+  id: string,
+  name: string;
+  year: string;
+  brand: string;
+  serial_number: string;
+  latest_status: { status: string };
+  grade_target: string;
+  grade: string;
+  created_at: string;
+};
 
-export default function Dashboard() {
+export default async function Dashboard() {
+  const cards = await getCurrentUserCard();
+
+  console.log(cards);
+
   return <div>
 
     {/* submission status summary */}
@@ -112,16 +83,22 @@ export default function Dashboard() {
             </tr>
           </thead>
           <tbody className="text-neutral-800 dark:text-neutral-100">
-            {tableData.map((item: Record<string, string | number>, index: number) => (
+            {cards?.data.map((item: CardType, index: number) => (
               <tr key={index}>
-                {fields.map(field => {
-                  return <td className="py-3 px-6 whitespace-nowrap" key={field.name}>{item[field.name]}</td>
-                })}
+                <td className="py-3 px-6 whitespace-nowrap">{item.name}</td>
+                <td className="py-3 px-6 whitespace-nowrap">{item.year}</td>
+                <td className="py-3 px-6 whitespace-nowrap">{item.brand}</td>
+                <td className="py-3 px-6 whitespace-nowrap">{item.serial_number}</td>
+                <td className="py-3 px-6 whitespace-nowrap">{item.grade_target}</td>
+                <td className="py-3 px-6 whitespace-nowrap">{item.latest_status.status}</td>
+                <td className="py-3 px-6 whitespace-nowrap">{formatDate(new Date(item.created_at))}</td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
     </div>
+
+    {!cards?.data.length && <p>you have not submit any card yet</p>}
   </div>
 }

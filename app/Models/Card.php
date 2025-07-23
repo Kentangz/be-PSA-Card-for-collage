@@ -10,7 +10,7 @@ class Card extends Model
 {
     use HasUuids;
 
-    protected $fillable = ["name", "year", "brand", "serial_number", "grade_target", "user_id"];
+    protected $fillable = ["name", "year", "brand", "serial_number", "grade_target", "user_id", "grade"];
 
     public function newUniqueId(): string
     {
@@ -30,5 +30,15 @@ class Card extends Model
     public function images()
     {
         return $this->hasMany(Image::class);
+    }
+
+    public function statuses()
+    {
+        return $this->hasMany(Status::class);
+    }
+
+    public function latestStatus()
+    {
+        return $this->hasOne(Status::class)->latestOfMany();
     }
 }
