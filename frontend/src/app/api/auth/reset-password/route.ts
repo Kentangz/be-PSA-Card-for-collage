@@ -10,7 +10,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(res.data);
   } catch (error: any) {
     return NextResponse.json(
-      { errors: error?.response?.data?.errors || "failed to reset password" },
+      { errors: error?.response?.data?.message || "make sure all fields is filled" },
       { status: error?.response?.status || 500 }
     );
   }

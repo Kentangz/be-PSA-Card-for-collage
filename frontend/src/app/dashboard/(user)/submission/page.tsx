@@ -1,49 +1,84 @@
 "use client";
 
-import Input from "@/app/components/input";
-import Image from "next/image";
-import { ChangeEvent, useState } from "react";
-import { LuUpload } from "react-icons/lu";
+import SubmissionForm from "@/app/components/submission-form";
+import axios from "axios";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+
+export type SubmissionData = {
+  name: string;
+  year: string;
+  brand: string;
+  serial_number: string;
+  grade_target: string;
+  images: File[];
+};
 
 export default function Submission() {
-  const [uploadFile, setUploadFile] = useState<File[]>([])
+  const [error, setError] = useState(false);
+  const [submissions, setSubmissions] = useState<SubmissionData[]>([
+    { name: "", year: "", brand: "", serial_number: "", grade_target: "", images: [] },
+  ]);
+  const router = useRouter();
 
-  const handleFileChange = (e: ChangeEvent) => {
-    const file = (e.target as HTMLInputElement).files?.[0];
-    if (file && file.type.startsWith("image/")) {
-      setUploadFile(prev => [...prev, file]);
-    }
-    console.log(uploadFile);
+  const addSubmission = () => {
+    setSubmissions(prev => [...prev, { name: "", year: "", brand: "", serial_number: "", grade_target: "", images: [] }])
   }
+
+  const updateForm = (index: number, data: SubmissionData) => {
+    const updated = [...submissions];
+    updated[index] = data;
+    setSubmissions(updated);
+  };
+
+  const handleSubmitAll = async () => {
+    for (const submission of submissions) {
+      const formData = new FormData();
+      formData.append("name", submission.name);
+      formData.append("year", submission.year);
+      formData.append("brand", submission.brand);
+      formData.append("serial_number", submission.serial_number);
+      formData.append("grade_target", submission.grade_target);
+      submission.images.forEach((file: File) => {
+        formData.append("images[]", file);
+      });
+
+      await axios.post("/api/card", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
+        .then(response => {
+          if (response.statusText == "OK") {
+            router.push("/dashboard/");
+          }
+        })
+        .catch(error => {
+          if (error) {
+            console.log(error);
+            setError(true);
+          }
+        });
+    }
+
+  };
 
   return <div>
     <h4 className="mb-4 text-lg">Submission Form</h4>
-    <form className="">
-      <div className="grid grid-cols-2 gap-4 mb-4 w-[700px]">
-        <Input type="text" label="Card Name" name="name" required={true} />
-        <Input type="number" label="Year" name="name" required={true} />
-        <Input type="text" label="Brand" name="brand" required={true} />
-        <Input type="text" label="Serial Number" name="serial_number" required={true} />
-        <select name="grade_target" className="dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded outline-none h-10 px-1">
-          <option>Grade Target</option>
-          <option value="A">A</option>
-          <option value="B">B</option>
-          <option value="C">C</option>
-        </select>
-      </div>
-      <div>
-        {
-          uploadFile?.map((item, i) => (
-            <div key={i} className="w-[700px] border border-neutral-700 rounded overflow-hidden mb-4">
-              <Image src={URL.createObjectURL(item)} width={500} height={500} alt="Profile Picture" className="h-full w-full object-cover" />
-            </div>
-          ))
-        }
-        <label htmlFor="picture" className="px-2 border border-neutral-200 dark:border-neutral-700 flex items-center rounded w-[700px] h-10 gap-2 justify-center hover:bg-neutral-100 dark:hover:bg-neutral-800">
-          <LuUpload />Upload Picture
-        </label>
-        <input type="file" name="image" onChange={handleFileChange} id="picture" className="hidden" />
-      </div>
-    </form>
+    <button onClick={addSubmission} className="mb-4 bg-neutral-800 hover:bg-neutral-800/80 px-4 py-2 rounded border border-neutral-700">add more submission form</button>
+
+    {error && <p className="text-red-500 text-center mb-4">error: make sure every fields is filled</p>}
+
+    <div className="grid grid-cols-2 gap-4">
+      {submissions.map((data, i) => (
+        <SubmissionForm
+          key={i}
+          index={i}
+          data={data}
+          onChange={updateForm}
+        />
+      ))}
+    </div>
+    <button onClick={handleSubmitAll} type="submit" className="bg-blue-600 h-10 hover:bg-blue-600/90 active:bg-blue-600/80 rounded cursor-pointer text-white w-20 mt-4">Submit</button>
   </div>
 }
