@@ -33,11 +33,20 @@ export default function UserDashboardLayout({ children }: { children: React.Reac
 
   useEffect(() => {
     const getCurrentUser = async () => {
-      const user = await axios.get("/api/auth/current-user") as any;
-      if (user.data.role === "admin") {
-        router.push("/dashboard/admin");
+      try {
+        const user = await axios.get("/api/auth/current-user") as any;
+
+        if (!user.data.is_active) {
+          await axios.get("/api/auth/logout");
+        }
+
+        if (user.data.role === "admin") {
+          router.push("/dashboard/admin");
+        }
+        setCurrentUser(user.data);
+      } catch (_) {
+        await axios.get("/api/auth/logout");
       }
-      setCurrentUser(user.data);
     }
     getCurrentUser();
   }, []);

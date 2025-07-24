@@ -32,4 +32,24 @@ class UserController extends Controller
             return response()->json(["message" => "success updated"]);
         }
     }
+
+    public function toggleAccount(Request $request, $id)
+    {
+        $validated = $request->validate([
+            "is_active" => "required|boolean"
+        ]);
+
+        if ($validated["is_active"] == true) {
+            $user = User::query()->where("id", $id)->update([
+                "is_active" => false
+            ]);
+
+            return $user;
+        }
+        $user = User::query()->where("id", $id)->update([
+            "is_active" => true
+        ]);
+
+        return response()->json(["data" => $user]);
+    }
 }

@@ -43,7 +43,7 @@ export default async function AdminDashboardUsersPage() {
                 <td className="py-3 px-6 whitespace-nowrap">{item.name}</td>
                 <td className="py-3 px-6 whitespace-nowrap">{item.email}</td>
                 <td className="py-3 px-6 whitespace-nowrap">{item.role}</td>
-                <td className="py-3 px-6 whitespace-nowrap">aktif</td>
+                <td className="py-3 px-6 whitespace-nowrap">{item.is_active ? "active" : "nonactive"}</td>
                 <td className="py-3 px-6 whitespace-nowrap flex justify-center text-xl text-blue-400">
                   <Link href={"/dashboard/admin/users/" + item.id}>
                     <BsEye />

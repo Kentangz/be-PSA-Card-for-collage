@@ -19,6 +19,7 @@ Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 Route::middleware("auth:sanctum")->group(function () {
     Route::get("/user", [AuthController::class, "getCurrentUser"]);
     Route::get("/users", [UserController::class, "index"]);
+    Route::put("/users/toggle/{id}", [UserController::class, "toggleAccount"]);
     Route::get("/users/{id}", [UserController::class, "show"]);
     Route::put("/users/{id}", [UserController::class, "update"]);
     Route::post("/logout", [AuthController::class, "logout"]);
