@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CardController;
 use App\Http\Controllers\StatusController;
+use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -17,6 +18,9 @@ Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 
 Route::middleware("auth:sanctum")->group(function () {
     Route::get("/user", [AuthController::class, "getCurrentUser"]);
+    Route::get("/users", [UserController::class, "index"]);
+    Route::get("/users/{id}", [UserController::class, "show"]);
+    Route::put("/users/{id}", [UserController::class, "update"]);
     Route::post("/logout", [AuthController::class, "logout"]);
 
     Route::post("/card", [CardController::class, "store"]);

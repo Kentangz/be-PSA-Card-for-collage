@@ -1,12 +1,11 @@
 import { getCurrentUserCardDetail } from "@/actions/card"
-import { API_URL, BE_URL } from "@/lib/api";
+import { BE_URL } from "@/lib/api";
 import formatDate from "@/utils/format-date";
 import Image from "next/image";
 
 export default async function TrackingDetail({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const card = await getCurrentUserCardDetail(id);
-  console.log(card);
 
   return <div>
     <div className="flex gap-8 mb-8">

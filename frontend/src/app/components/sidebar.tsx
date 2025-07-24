@@ -17,7 +17,6 @@ interface SidebarType {
 
 export default function Sidebar({ menu }: SidebarType) {
   const pathname = usePathname();
-  console.log(pathname);
 
   return <div className="min-w-60 fixed top-4 bottom-4 bg-neutral-100 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded px-2 flex flex-col justify-between z-30">
     <div>

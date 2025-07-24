@@ -4,7 +4,6 @@ import Input from "@/app/components/input";
 import { useRouter, useSearchParams } from "next/navigation";
 import { FormEvent, useState } from "react";
 import axios from "axios";
-import { API_URL } from "@/lib/api";
 
 export default function ResetPassword() {
   const searchParams = useSearchParams();
@@ -33,7 +32,6 @@ export default function ResetPassword() {
         return response.data;
       })
       .catch(error => {
-        console.log(error);
         if (error.response.status == 422) {
           setError(error.response.data.errors);
         }

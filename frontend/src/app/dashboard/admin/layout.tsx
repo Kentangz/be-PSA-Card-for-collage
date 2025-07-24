@@ -4,7 +4,7 @@ import ProfileMenu from "@/app/components/profile-menu";
 import Sidebar from "@/app/components/sidebar";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { BsPeopleFill } from "react-icons/bs";
 import { ImHome } from "react-icons/im";
 import { MdAssignment } from "react-icons/md";
@@ -28,14 +28,16 @@ const menu = [
 ]
 
 export default function AdminDashboardLayout({ children }: { children: React.ReactNode }) {
+  const [currentUser, setCurrentUser] = useState();
   const router = useRouter();
 
   useEffect(() => {
     const getCurrentUser = async () => {
-      const currentUser = await axios.get("/api/auth/current-user") as any;
-      if (currentUser.data.role !== "admin") {
+      const user = await axios.get("/api/auth/current-user") as any;
+      if (user.data.role !== "admin") {
         router.push("/dashboard");
       }
+      setCurrentUser(user.data)
     }
     getCurrentUser();
   }, []);
@@ -46,7 +48,7 @@ export default function AdminDashboardLayout({ children }: { children: React.Rea
       <div className="h-14 flex justify-between items-center px-2">
         <p className="text-xl font-medium">dashboard</p>
         <div className="flex items-center gap-4">
-          <ProfileMenu />
+          <ProfileMenu currentUser={currentUser} />
         </div>
       </div>
     </nav>

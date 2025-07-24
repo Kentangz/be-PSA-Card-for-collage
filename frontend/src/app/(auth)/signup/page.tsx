@@ -8,7 +8,7 @@ import axios from "axios";
 import { API_URL } from "@/lib/api";
 
 export default function Signup() {
-  const [error, setError] = useState<Record<string, string>>([]);
+  const [error, setError] = useState<Record<string, string>>();
   const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
 

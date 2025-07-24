@@ -5,7 +5,7 @@ import Sidebar from "@/app/components/sidebar"
 import UserNotification from "@/app/components/user-notification"
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { ImHome } from "react-icons/im"
 import { MdAssignmentAdd, MdTrackChanges } from "react-icons/md";
 
@@ -29,14 +29,15 @@ const menu = [
 
 export default function UserDashboardLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
+  const [currentUser, setCurrentUser] = useState();
 
   useEffect(() => {
     const getCurrentUser = async () => {
-      const currentUser = await axios.get("/api/auth/current-user") as any;
-      console.log(currentUser);
-      if (currentUser.data.role === "admin") {
+      const user = await axios.get("/api/auth/current-user") as any;
+      if (user.data.role === "admin") {
         router.push("/dashboard/admin");
       }
+      setCurrentUser(user.data);
     }
     getCurrentUser();
   }, []);
@@ -48,7 +49,7 @@ export default function UserDashboardLayout({ children }: { children: React.Reac
         <p className="text-xl font-medium">dashboard</p>
         <div className="flex items-center gap-4">
           <UserNotification />
-          <ProfileMenu />
+          <ProfileMenu currentUser={currentUser} />
         </div>
       </div>
     </nav>

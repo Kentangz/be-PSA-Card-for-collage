@@ -35,57 +35,8 @@ const fields = [
   },
 ]
 
-const tableData = [
-  {
-    name: "kartu 1",
-    year: 2001,
-    brand: "toyota",
-    serial_number: 111112,
-    grade_target: "A",
-    status: "submitted",
-    submitted_at: "21 jul 2025"
-  },
-  {
-    name: "kartu 1",
-    year: 2001,
-    brand: "toyota",
-    serial_number: 111113,
-    grade_target: "A",
-    status: "accepted",
-    submitted_at: "21 jul 2025"
-  },
-  {
-    name: "kartu 1",
-    year: 2001,
-    brand: "toyota",
-    serial_number: 111114,
-    grade_target: "A",
-    status: "in process",
-    submitted_at: "21 jul 2025"
-  },
-  {
-    name: "kartu 1",
-    year: 2001,
-    brand: "toyota",
-    serial_number: 111115,
-    grade_target: "A",
-    status: "done",
-    submitted_at: "21 jul 2025"
-  },
-  {
-    name: "kartu 1",
-    year: 2001,
-    brand: "toyota",
-    serial_number: 111116,
-    grade_target: "A",
-    status: "done",
-    submitted_at: "21 jul 2025"
-  }
-]
-
 export default async function AdminDashboardSubmissionPage() {
   const cards = await getCards();
-  console.log(cards);
 
   return <div>
     <h4 className="mb-4 text-lg">Submission</h4>

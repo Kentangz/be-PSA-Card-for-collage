@@ -8,7 +8,6 @@ import Image from "next/image";
 export default async function SubmissoinDetail({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const card = await getCardDetail(id);
-  console.log(card);
 
   return <div>
     <div className="flex gap-8 mb-8">

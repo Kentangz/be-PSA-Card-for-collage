@@ -14,7 +14,6 @@ export default function UpdateCard({ card }: { card?: CardType }) {
     const grade = formData.get("grade");
 
     const response = await axios.put("/api/card/" + card?.id, { grade })
-    console.log(response);
     if (response.status == 200) {
       handleUpdateSubmission("done");
     }
@@ -27,7 +26,6 @@ export default function UpdateCard({ card }: { card?: CardType }) {
     }
   }
 
-  console.log(card);
   return <div>
     {card?.latest_status.status == "submitted" &&
       <div>

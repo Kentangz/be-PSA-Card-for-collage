@@ -8,8 +8,6 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
   const body = await req.json();
   const token = await getAuthToken();
 
-  console.log(id);
-
   try {
     const res = await axios.put(API_URL + "/users/" + id, body, {
       headers: {

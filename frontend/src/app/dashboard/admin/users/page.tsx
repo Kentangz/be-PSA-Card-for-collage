@@ -23,7 +23,6 @@ const fields = [
 
 export default async function AdminDashboardUsersPage() {
   const users = await getAllUser();
-  console.log(users);
 
   return <div>
     <h4 className="mb-4 text-lg">Users</h4>

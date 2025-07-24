@@ -24,7 +24,6 @@ export default function Signin() {
     setLoading(true);
     const data = await axios.post('/api/auth/login', user)
       .then(response => {
-        console.log(response);
         return response.data;
       })
       .catch(error => {

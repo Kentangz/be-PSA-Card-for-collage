@@ -38,7 +38,7 @@ export default function SubmissionForm({
   };
 
   return (
-    <div className="border border-zinc-700 p-4 rounded">
+    <div className="border border-neutral-200 dark:border-neutral-700 p-4 rounded">
       <div className="grid grid-cols-2 gap-4 mb-4 w-full">
         <Input
           id={`name${index}`}

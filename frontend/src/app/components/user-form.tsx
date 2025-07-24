@@ -27,11 +27,9 @@ export default function UserForm({ user, id }: { user: UserType, id: string }) {
     // setLoading(true);
     const data = await axios.put('/api/users/' + id, user)
       .then(response => {
-        console.log(response);
         return response.data;
       })
       .catch(error => {
-        console.log(error);
         if (error.response.status == 422) {
           // setError(error.response.data.errors);
         }

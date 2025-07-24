@@ -47,8 +47,6 @@ export type CardType = {
 export default async function Dashboard() {
   const cards = await getCurrentUserCard();
 
-  console.log(cards);
-
   return <div>
 
     {/* submission status summary */}

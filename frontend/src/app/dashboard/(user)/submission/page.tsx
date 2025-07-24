@@ -55,7 +55,6 @@ export default function Submission() {
         })
         .catch(error => {
           if (error) {
-            console.log(error);
             setError(true);
           }
         });
@@ -65,7 +64,7 @@ export default function Submission() {
 
   return <div>
     <h4 className="mb-4 text-lg">Submission Form</h4>
-    <button onClick={addSubmission} className="mb-4 bg-neutral-800 hover:bg-neutral-800/80 px-4 py-2 rounded border border-neutral-700">add more submission form</button>
+    <button onClick={addSubmission} className="mb-4 bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200/50 dark:hover:bg-neutral-800/80 px-4 py-2 rounded border border-neutral-200 dark:border-neutral-700">add more submission form</button>
 
     {error && <p className="text-red-500 text-center mb-4">error: make sure every fields is filled</p>}
 

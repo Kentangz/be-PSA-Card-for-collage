@@ -16,13 +16,12 @@ export default function ForgotPassword() {
       email: formData.get("email"),
     } as Record<string, string>;
 
-    const data = await axios.post('/api/auth/forgot-password', body)
+    await axios.post('/api/auth/forgot-password', body)
       .then(response => {
         setSuccessMessage(response.data.status);
         return response.data;
       })
       .catch(error => {
-        console.log(error);
         if (error.response.status == 422) {
           setError(error.response.data.message);
         }

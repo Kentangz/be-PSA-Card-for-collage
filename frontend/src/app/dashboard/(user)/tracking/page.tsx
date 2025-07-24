@@ -29,7 +29,6 @@ const fields = [
 
 export default async function Tracking() {
   const cards = await getCurrentUserCard();
-  console.log(cards);
 
   return <div>
     <h4 className="mb-4 text-lg">Tracking</h4>
