@@ -9,7 +9,7 @@ class CardController extends Controller
 {
     public function index()
     {
-        return Card::all();
+        return Card::with(["latestStatus", "statuses"])->get();
     }
 
     public function getCardByUser(Request $request)
@@ -19,7 +19,7 @@ class CardController extends Controller
 
     public function show($id)
     {
-        return Card::query()->where("id", $id)->get();
+        return Card::query()->where("id", $id)->with(["latestStatus", "statuses", "images"])->firstOrFail();
     }
 
     public function getDetailCardByUser(Request $request, $id)
@@ -51,6 +51,19 @@ class CardController extends Controller
                 ]);
             }
         }
+
+        return response()->json(["card" => $card]);
+    }
+
+    public function update(Request $request, $id)
+    {
+        $validated = $request->validate([
+            "grade" => "required|string",
+        ]);
+
+        $card = Card::query()->where("id", $id)->update([
+            "grade" => $validated["grade"]
+        ]);
 
         return response()->json(["card" => $card]);
     }

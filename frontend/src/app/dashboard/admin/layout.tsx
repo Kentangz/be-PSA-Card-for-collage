@@ -2,6 +2,9 @@
 
 import ProfileMenu from "@/app/components/profile-menu";
 import Sidebar from "@/app/components/sidebar";
+import axios from "axios";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { BsPeopleFill } from "react-icons/bs";
 import { ImHome } from "react-icons/im";
 import { MdAssignment } from "react-icons/md";
@@ -25,6 +28,18 @@ const menu = [
 ]
 
 export default function AdminDashboardLayout({ children }: { children: React.ReactNode }) {
+  const router = useRouter();
+
+  useEffect(() => {
+    const getCurrentUser = async () => {
+      const currentUser = await axios.get("/api/auth/current-user") as any;
+      if (currentUser.data.role !== "admin") {
+        router.push("/dashboard");
+      }
+    }
+    getCurrentUser();
+  }, []);
+
   return <>
     <Sidebar menu={menu} />
     <nav className="w-full pl-62 mt-4">

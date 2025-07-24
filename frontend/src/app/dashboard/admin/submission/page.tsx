@@ -1,5 +1,8 @@
+import { getCards } from "@/actions/card";
 import Link from "next/link"
 import { BsEye } from "react-icons/bs"
+import { CardType } from "../../(user)/page";
+import formatDate from "@/utils/format-date";
 
 const fields = [
   {
@@ -80,7 +83,10 @@ const tableData = [
   }
 ]
 
-export default function AdminDashboardSubmissionPage() {
+export default async function AdminDashboardSubmissionPage() {
+  const cards = await getCards();
+  console.log(cards);
+
   return <div>
     <h4 className="mb-4 text-lg">Submission</h4>
     <div className="flex">
@@ -95,13 +101,17 @@ export default function AdminDashboardSubmissionPage() {
             </tr>
           </thead>
           <tbody className="text-neutral-800 dark:text-neutral-100">
-            {tableData.map((item: Record<string, string | number>, index: number) => (
+            {cards?.data.map((item: CardType, index: number) => (
               <tr key={index}>
-                {fields.map(field => {
-                  return <td className="py-3 px-6 whitespace-nowrap" key={field.name}>{item[field.name]}</td>
-                })}
+                <td className="py-3 px-6 whitespace-nowrap">{item.name}</td>
+                <td className="py-3 px-6 whitespace-nowrap">{item.year}</td>
+                <td className="py-3 px-6 whitespace-nowrap">{item.brand}</td>
+                <td className="py-3 px-6 whitespace-nowrap">{item.serial_number}</td>
+                <td className="py-3 px-6 whitespace-nowrap">{item.grade_target}</td>
+                <td className="py-3 px-6 whitespace-nowrap">{item.latest_status.status}</td>
+                <td className="py-3 px-6 whitespace-nowrap">{formatDate(new Date(item.created_at))}</td>
                 <td className="py-3 px-6 whitespace-nowrap flex justify-center text-xl text-blue-400">
-                  <Link href={"/dashboard/admin/submission/1"}>
+                  <Link href={"/dashboard/admin/submission/" + item.id}>
                     <BsEye />
                   </Link>
                 </td>

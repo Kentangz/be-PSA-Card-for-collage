@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CardController;
+use App\Http\Controllers\StatusController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -20,7 +21,10 @@ Route::middleware("auth:sanctum")->group(function () {
 
     Route::post("/card", [CardController::class, "store"]);
     Route::get("/card", [CardController::class, "index"]);
+    Route::put("/card/{id}", [CardController::class, "update"]);
     Route::get("/user-cards", [CardController::class, "getCardByUser"]);
     Route::get("/card/{id}", [CardController::class, "show"]);
     Route::get("/user-cards/{id}", [CardController::class, "getDetailCardByUser"]);
+
+    Route::post("/status", [StatusController::class, "store"]);
 });

@@ -50,7 +50,7 @@ export default async function TrackingDetail({ params }: { params: Promise<{ id:
         {card?.data.statuses.map((data: { status: string, created_at: string }, i: number) => (
           <div key={i} className="py-2 border-s border-neutral-400 dark:border-neutral-700 px-4 relative flex flex-col justify-center">
             <div className="h-4 w-4 absolute bg-neutral-300 dark:bg-neutral-800 -left-2 rounded-full border border-neutral-400 dark:border-neutral-700"></div>
-            <p className="text-lg">{data.status}</p>
+            <div className="text-lg"><p>{data.status}</p> {data.status == "done" && <p className="text-sm text-blue-500">card is verified (grade: {card?.data.grade})</p>}</div>
             <p className="text-sm text-neutral-400">{formatDate(new Date(data.created_at))}</p>
           </div>
         ))}

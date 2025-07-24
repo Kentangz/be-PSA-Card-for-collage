@@ -19,6 +19,38 @@ export const getCurrentUserCard = async () => {
 }
 
 
+export const getCards = async () => {
+  const token = await getAuthToken();
+
+  try {
+    const data = await axios.get(API_URL + "/card", {
+      headers: {
+        Authorization: "Bearer " + token
+      }
+    })
+
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export const getCardDetail = async (id: string) => {
+  const token = await getAuthToken();
+
+  try {
+    const data = await axios.get(API_URL + "/card/" + id, {
+      headers: {
+        Authorization: "Bearer " + token
+      }
+    })
+
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 export const getCurrentUserCardDetail = async (id: string) => {
   const token = await getAuthToken();
 

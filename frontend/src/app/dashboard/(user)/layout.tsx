@@ -3,6 +3,9 @@
 import ProfileMenu from "@/app/components/profile-menu"
 import Sidebar from "@/app/components/sidebar"
 import UserNotification from "@/app/components/user-notification"
+import axios from "axios";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { ImHome } from "react-icons/im"
 import { MdAssignmentAdd, MdTrackChanges } from "react-icons/md";
 
@@ -25,6 +28,19 @@ const menu = [
 ]
 
 export default function UserDashboardLayout({ children }: { children: React.ReactNode }) {
+  const router = useRouter();
+
+  useEffect(() => {
+    const getCurrentUser = async () => {
+      const currentUser = await axios.get("/api/auth/current-user") as any;
+      console.log(currentUser);
+      if (currentUser.data.role === "admin") {
+        router.push("/dashboard/admin");
+      }
+    }
+    getCurrentUser();
+  }, []);
+
   return <>
     <Sidebar menu={menu} />
     <nav className="w-full pl-62 mt-4">
