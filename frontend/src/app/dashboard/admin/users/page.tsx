@@ -1,3 +1,4 @@
+import { getAllUser } from "@/actions/user"
 import Link from "next/link"
 import { BsEye } from "react-icons/bs"
 
@@ -11,8 +12,8 @@ const fields = [
     name: "email"
   },
   {
-    label: "Phone number",
-    name: "phone_number"
+    label: "Role",
+    name: "role"
   },
   {
     label: "Status",
@@ -20,28 +21,10 @@ const fields = [
   },
 ]
 
-const tableData = [
-  {
-    name: "user 1",
-    email: "user1@gmail.com",
-    phone_number: "123456789",
-    status: "active"
-  },
-  {
-    name: "user 2",
-    email: "user1@gmail.com",
-    phone_number: "123456789",
-    status: "nonactive"
-  },
-  {
-    name: "user 3",
-    email: "user1@gmail.com",
-    phone_number: "123456789",
-    status: "active"
-  },
-]
+export default async function AdminDashboardUsersPage() {
+  const users = await getAllUser();
+  console.log(users);
 
-export default function AdminDashboardUsersPage() {
   return <div>
     <h4 className="mb-4 text-lg">Users</h4>
     <div className="flex">
@@ -56,13 +39,14 @@ export default function AdminDashboardUsersPage() {
             </tr>
           </thead>
           <tbody className="text-neutral-800 dark:text-neutral-100">
-            {tableData.map((item: Record<string, string | number>, index: number) => (
+            {users?.data.map((item: Record<string, string | number>, index: number) => (
               <tr key={index}>
-                {fields.map(field => {
-                  return <td className="py-3 px-6 whitespace-nowrap" key={field.name}>{item[field.name]}</td>
-                })}
+                <td className="py-3 px-6 whitespace-nowrap">{item.name}</td>
+                <td className="py-3 px-6 whitespace-nowrap">{item.email}</td>
+                <td className="py-3 px-6 whitespace-nowrap">{item.role}</td>
+                <td className="py-3 px-6 whitespace-nowrap">aktif</td>
                 <td className="py-3 px-6 whitespace-nowrap flex justify-center text-xl text-blue-400">
-                  <Link href={"/dashboard/admin/users/1"}>
+                  <Link href={"/dashboard/admin/users/" + item.id}>
                     <BsEye />
                   </Link>
                 </td>
