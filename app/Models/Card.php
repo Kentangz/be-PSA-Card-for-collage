@@ -10,7 +10,7 @@ class Card extends Model
 {
     use HasUuids;
 
-    protected $fillable = ["name", "year", "brand", "serial_number", "grade_target", "user_id", "grade"];
+    protected $fillable = ["name", "year", "brand", "serial_number", "grade_target", "user_id", "grade", "payment_url"];
 
     public function newUniqueId(): string
     {
@@ -40,5 +40,10 @@ class Card extends Model
     public function latestStatus()
     {
         return $this->hasOne(Status::class)->latestOfMany();
+    }
+
+    public function deliveryProofs()
+    {
+        return $this->hasMany(CardDeliveryProof::class);
     }
 }
