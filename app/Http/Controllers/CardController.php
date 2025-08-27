@@ -34,17 +34,29 @@ class CardController extends Controller
 
     public function getCardByUser(Request $request)
     {
-        return response()->json(Card::query()->where("user_id", $request->user()->id)->with(["latestStatus"])->get());
+        return response()->json(
+            Card::query()
+                ->where("user_id", $request->user()->id)
+                ->with(["latestStatus"])
+                ->get()
+        );
     }
 
     public function show($id)
     {
-        return Card::query()->where("id", $id)->with(["latestStatus", "statuses", "images", "deliveryProofs"])->firstOrFail();
+        return Card::query()
+            ->where("id", $id)
+            ->with(["latestStatus", "statuses", "images", "deliveryProofs"])
+            ->firstOrFail();
     }
 
     public function getDetailCardByUser(Request $request, $id)
     {
-        return Card::query()->where("id", $id)->where("user_id", $request->user()->id)->with(["latestStatus", "statuses", "images", "deliveryProofs"])->firstOrFail();
+        return Card::query()
+            ->where("id", $id)
+            ->where("user_id", $request->user()->id)
+            ->with(["latestStatus", "statuses", "images", "deliveryProofs"])
+            ->firstOrFail();
     }
 
     public function store(Request $request)
@@ -55,7 +67,15 @@ class CardController extends Controller
             "brand" => "required|string",
             // "serial_number" => "nullable|string",
             "grade_target" => "required|string",
+            "batch_id" => "required|exists:batches,id",
         ]);
+
+        $batch = \App\Models\Batch::findOrFail($validated['batch_id']);
+        if (!$batch->is_active) {
+            return response()->json([
+                'message' => 'Selected batch is not active for submissions'
+            ], 422);
+        }
 
         $validated["user_id"] = $request->user()->id;
         $card = Card::query()->create($validated);
@@ -71,7 +91,8 @@ class CardController extends Controller
                 ]);
             }
         }
-
+        
+        $card->load(['batch:id,batch_number,register_number']);
         return response()->json(["card" => $card]);
     }
 
@@ -112,7 +133,7 @@ class CardController extends Controller
             ->whereHas('latestStatus', function ($q) {
                 $q->where('status', 'done');
             })
-            ->first(); 
+            ->first();
 
         if (!$card) {
             return response()->json([
@@ -132,14 +153,14 @@ class CardController extends Controller
         $limit = $request->query('limit', 3);
 
         $latestCards = Card::with(['images' => function ($q) {
-            $q->limit(1);
-        }])
+                $q->limit(1);
+            }])
             ->whereHas('latestStatus', function ($q) {
                 $q->where('status', 'done');
             })
             ->orderBy('updated_at', 'desc')
             ->limit($limit)
-            ->get(['id', 'serial_number']) 
+            ->get(['id', 'serial_number'])
             ->map(function ($card) {
                 return [
                     'id' => $card->id,

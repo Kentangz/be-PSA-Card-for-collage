@@ -10,7 +10,17 @@ class Card extends Model
 {
     use HasUuids;
 
-    protected $fillable = ["name", "year", "brand", "serial_number", "grade_target", "user_id", "grade", "payment_url"];
+    protected $fillable = [
+        "name",
+        "year",
+        "brand",
+        "serial_number",
+        "grade_target",
+        "user_id",
+        "batch_id",
+        "grade",
+        "payment_url"
+    ];
 
     public function newUniqueId(): string
     {
@@ -22,9 +32,13 @@ class Card extends Model
         return ['id'];
     }
 
-    public function User()
+    public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function batch(){
+        return $this->belongsTo(Batch::class);
     }
 
     public function images()

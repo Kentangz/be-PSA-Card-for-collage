@@ -6,6 +6,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CardController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\StatusController;
+use App\Http\Controllers\BatchController; // tambah import
 use App\Http\Controllers\CardDeliveryProofController;
 
 Route::get('/user', function (Request $request) {
@@ -38,6 +39,13 @@ Route::middleware("auth:sanctum")->group(function () {
     Route::get("/user-cards", [CardController::class, "getCardByUser"]);
     Route::get("/card/{id}", [CardController::class, "show"]);
     Route::get("/user-cards/{id}", [CardController::class, "getDetailCardByUser"]);
+
+    // Batch routes
+    Route::get("/batches", [BatchController::class, "index"]);
+    Route::post("/batches", [BatchController::class, "store"]);
+    Route::get("/batches/{id}", [BatchController::class, "show"]);
+    Route::put("/batches/{id}", [BatchController::class, "update"]);
+    Route::get("/active-batches", [BatchController::class, "getActiveBatches"]);
 
     // Status routes
     Route::post("/status", [StatusController::class, "store"]);
