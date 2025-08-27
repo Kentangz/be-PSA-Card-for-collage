@@ -11,7 +11,7 @@ class CardController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Card::with(["latestStatus", "statuses"]);
+        $query = Card::with(["latestStatus", "statuses", "batch"]);
 
         if ($request->has('status')) {
             $status = $request->query('status');
@@ -37,7 +37,7 @@ class CardController extends Controller
         return response()->json(
             Card::query()
                 ->where("user_id", $request->user()->id)
-                ->with(["latestStatus"])
+                ->with(["latestStatus", "batch"])
                 ->get()
         );
     }
@@ -46,7 +46,7 @@ class CardController extends Controller
     {
         return Card::query()
             ->where("id", $id)
-            ->with(["latestStatus", "statuses", "images", "deliveryProofs"])
+            ->with(["latestStatus", "statuses", "images", "deliveryProofs", "batch"])
             ->firstOrFail();
     }
 
@@ -55,7 +55,7 @@ class CardController extends Controller
         return Card::query()
             ->where("id", $id)
             ->where("user_id", $request->user()->id)
-            ->with(["latestStatus", "statuses", "images", "deliveryProofs"])
+            ->with(["latestStatus", "statuses", "images", "deliveryProofs", "batch"])
             ->firstOrFail();
     }
 
@@ -91,8 +91,8 @@ class CardController extends Controller
                 ]);
             }
         }
-        
-        $card->load(['batch:id,batch_number,register_number']);
+
+        $card->load(['batch:id,batch_number,register_number,services,category']);
         return response()->json(["card" => $card]);
     }
 
@@ -128,7 +128,7 @@ class CardController extends Controller
 
         $serialNumber = trim($request->query('q'));
 
-        $card = Card::with(['images', 'latestStatus', 'statuses'])
+        $card = Card::with(['images', 'latestStatus', 'statuses', 'batch'])
             ->where('serial_number', $serialNumber)
             ->whereHas('latestStatus', function ($q) {
                 $q->where('status', 'done');
@@ -153,8 +153,8 @@ class CardController extends Controller
         $limit = $request->query('limit', 3);
 
         $latestCards = Card::with(['images' => function ($q) {
-                $q->limit(1);
-            }])
+            $q->limit(1);
+        }])
             ->whereHas('latestStatus', function ($q) {
                 $q->where('status', 'done');
             })
