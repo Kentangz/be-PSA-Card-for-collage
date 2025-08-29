@@ -60,4 +60,36 @@ class Card extends Model
     {
         return $this->hasMany(CardDeliveryProof::class);
     }
+    /**
+     * Get all batch payments for this user
+     */
+    public function batchPayments()
+    {
+        return $this->hasMany(BatchPayment::class);
+    }
+
+    /**
+     * Get batch payment for specific batch
+     */
+    public function getPaymentForBatch($batchId)
+    {
+        return $this->batchPayments()->where('batch_id', $batchId)->first();
+    }
+
+    /**
+     * Get all submissions in a specific batch
+     */
+    public function submissionsInBatch($batchId)
+    {
+        return $this->hasMany(Card::class)->where('batch_id', $batchId);
+    }
+
+    /**
+     * Get the latest status
+     */
+    public function latest_status()
+    {
+        return $this->hasOne(Status::class, 'card_id', 'id')->latest();
+    }
+
 }

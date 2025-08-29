@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 
 class BatchController extends Controller
 {
-  // GET /batches - List all batches (admin)
   public function index(Request $request)
   {
     $query = Batch::query()->withCount('cards');
@@ -25,7 +24,6 @@ class BatchController extends Controller
     return $query->orderBy('created_at', 'desc')->get();
   }
 
-  // POST /batches - Create new batch (admin)
   public function store(Request $request)
   {
     $validated = $request->validate([
@@ -42,7 +40,6 @@ class BatchController extends Controller
     ], 201);
   }
 
-  // GET /batches/{id} - Get specific batch with submissions (admin)
   public function show($id)
   {
     $batch = Batch::with(['cards' => function ($query) {
@@ -52,7 +49,6 @@ class BatchController extends Controller
     return response()->json($batch);
   }
 
-  // PUT /batches/{id} - Update batch (mainly toggle is_active)
   public function update(Request $request, $id)
   {
     $batch = Batch::findOrFail($id);
@@ -71,7 +67,6 @@ class BatchController extends Controller
     ]);
   }
 
-  // GET /active-batches - Get only active batches for user selection
   public function getActiveBatches()
   {
     $activeBatches = Batch::where('is_active', true)

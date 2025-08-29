@@ -6,8 +6,9 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CardController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\StatusController;
-use App\Http\Controllers\BatchController; // tambah import
+use App\Http\Controllers\BatchPaymentController;
 use App\Http\Controllers\CardDeliveryProofController;
+use App\Http\Controllers\BatchController; // tambah import
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -46,6 +47,14 @@ Route::middleware("auth:sanctum")->group(function () {
     Route::get("/batches/{id}", [BatchController::class, "show"]);
     Route::put("/batches/{id}", [BatchController::class, "update"]);
     Route::get("/active-batches", [BatchController::class, "getActiveBatches"]);
+
+    // Batch Payment routes
+    Route::post("/batch-payments", [BatchPaymentController::class, "store"]);
+    Route::get("/batch-payments/batch/{batchId}", [BatchPaymentController::class, "getByBatch"]);
+    Route::get("/batch-payments/{id}", [BatchPaymentController::class, "show"]);
+    Route::put("/batch-payments/{id}/send", [BatchPaymentController::class, "sendPaymentLink"]);
+    Route::delete("/batch-payments/{id}", [BatchPaymentController::class, "destroy"]);
+    Route::get("/batch-payments-pending", [BatchPaymentController::class, "getPendingPayments"]);
 
     // Status routes
     Route::post("/status", [StatusController::class, "store"]);
