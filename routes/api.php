@@ -8,7 +8,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\StatusController;
 use App\Http\Controllers\BatchPaymentController;
 use App\Http\Controllers\CardDeliveryProofController;
-use App\Http\Controllers\BatchController; // tambah import
+use App\Http\Controllers\BatchController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();

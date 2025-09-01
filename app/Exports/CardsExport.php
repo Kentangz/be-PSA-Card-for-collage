@@ -27,7 +27,7 @@ class CardsExport implements FromCollection, WithHeadings, WithMapping
             'Year',
             'Brand',
             'Serial Number',
-            'Grade Target',
+            // 'Grade Target',
             'Grade',
             'Batch Number',
             'Register Number',

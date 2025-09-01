@@ -11,7 +11,7 @@ class CardController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Card::with(["latestStatus", "statuses", "batch"]);
+        $query = Card::with(["latestStatus", "statuses", "batch", "certificates"]);
 
         if ($request->has('status')) {
             $status = $request->query('status');
@@ -37,7 +37,7 @@ class CardController extends Controller
         return response()->json(
             Card::query()
                 ->where("user_id", $request->user()->id)
-                ->with(["latestStatus", "batch"])
+                ->with(["latestStatus", "batch", "certificates"])
                 ->get()
         );
     }
@@ -46,7 +46,7 @@ class CardController extends Controller
     {
         return Card::query()
             ->where("id", $id)
-            ->with(["latestStatus", "statuses", "images", "deliveryProofs", "batch"])
+            ->with(["latestStatus", "statuses", "images", "deliveryProofs", "batch", "certificates"])
             ->firstOrFail();
     }
 
@@ -55,7 +55,7 @@ class CardController extends Controller
         return Card::query()
             ->where("id", $id)
             ->where("user_id", $request->user()->id)
-            ->with(["latestStatus", "statuses", "images", "deliveryProofs", "batch"])
+            ->with(["latestStatus", "statuses", "images", "deliveryProofs", "batch", "certificates"])
             ->firstOrFail();
     }
 
@@ -116,12 +116,31 @@ class CardController extends Controller
             $rules['payment_url'] = 'required|url';
         }
 
+        if ($request->has('certificates')) {
+            $rules['certificates'] = 'array';
+            $rules['certificates.*.cert_url'] = 'required|url';
+        }
+
         $validated = $request->validate($rules);
 
-        // Update card with provided fields only
-        $card = Card::query()->where("id", $id)->update($validated);
+        $card = Card::findOrFail($id);
 
-        return response()->json(["card" => $card]);
+        $cardData = collect($validated)->except('certificates')->toArray();
+        if (!empty($cardData)) {
+            $card->update($cardData);
+        }
+
+        if ($request->has('certificates')) {
+            foreach ($validated['certificates'] as $cert) {
+                $card->certificates()->create([
+                    'cert_url' => $cert['cert_url']
+                ]);
+            }
+        }
+
+        return response()->json([
+            "card" => $card->load('certificates')
+        ]);
     }
 
     public function publicSearchBySerialNumber(Request $request)
@@ -132,7 +151,7 @@ class CardController extends Controller
 
         $serialNumber = trim($request->query('q'));
 
-        $card = Card::with(['images', 'latestStatus', 'statuses', 'batch'])
+        $card = Card::with(['latestStatus'])
             ->where('serial_number', $serialNumber)
             ->whereHas('latestStatus', function ($q) {
                 $q->where('status', 'done');
@@ -143,6 +162,22 @@ class CardController extends Controller
             return response()->json([
                 'message' => 'Card with serial number "' . $serialNumber . '" not found or not done yet.'
             ], 404);
+        }
+
+        if ($card->certificates->isNotEmpty()) {
+            $card->display_images = $card->certificates->map(function ($cert) {
+                return [
+                    'type' => 'certificate',
+                    'url' => $cert->cert_url
+                ];
+            });
+        } else {
+            $card->display_images = $card->images->map(function ($image) {
+                return [
+                    'type' => 'upload',
+                    'url' => asset('storage/' . $image->path)
+                ];
+            });
         }
 
         $card->images->each(function ($image) {
