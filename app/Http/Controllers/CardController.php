@@ -66,7 +66,7 @@ class CardController extends Controller
             "year" => "required|integer",
             "brand" => "required|string",
             // "serial_number" => "nullable|string",
-            "grade_target" => "required|string",
+            // "grade_target" => "required|string",
             "batch_id" => "required|exists:batches,id",
         ]);
 
@@ -99,6 +99,10 @@ class CardController extends Controller
     public function update(Request $request, $id)
     {
         $rules = [];
+
+        if ($request->has('name')) {
+            $rules['name'] = 'required|string';
+        }
 
         if ($request->has('grade')) {
             $rules['grade'] = 'required|string';

@@ -1,6 +1,3 @@
--- Migration: Create batch_payments table
--- File: database/migrations/YYYY_MM_DD_HHMMSS_create_batch_payments_table.php
-
 <?php
 
 use Illuminate\Database\Migrations\Migration;
@@ -24,14 +21,11 @@ return new class extends Migration
             $table->timestamp('sent_at')->nullable();
             $table->timestamps();
 
-            // Foreign key constraints
             $table->foreign('batch_id')->references('id')->on('batches')->onDelete('cascade');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
 
-            // Unique constraint to prevent duplicate batch-user combinations
             $table->unique(['batch_id', 'user_id'], 'unique_batch_user');
 
-            // Indexes for better query performance
             $table->index('batch_id');
             $table->index('user_id');
             $table->index('is_sent');

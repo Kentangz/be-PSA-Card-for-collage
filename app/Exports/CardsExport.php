@@ -44,7 +44,7 @@ class CardsExport implements FromCollection, WithHeadings, WithMapping
             $card->year,
             $card->brand,
             $card->serial_number,
-            $card->grade_target,
+            // $card->grade_target,
             $card->grade,
             $card->batch ? $card->batch->batch_number : 'No Batch',
             $card->batch ? $card->batch->register_number : 'N/A',
