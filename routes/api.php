@@ -14,11 +14,11 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
+// auth routes
 Route::post("/login", [AuthController::class, "login"]);
 Route::post("/register", [AuthController::class, "register"]);
 Route::post('/forgot-password', [AuthController::class, 'sendResetLink']);
 Route::post('/reset-password', [AuthController::class, 'resetPassword']);
-Route::get("/cards/export", [CardController::class, "export"]);
 
 // Public routes
 Route::get('/public-card-search-serial', [CardController::class, 'publicSearchBySerialNumber']);
@@ -40,6 +40,7 @@ Route::middleware("auth:sanctum")->group(function () {
     Route::get("/user-cards", [CardController::class, "getCardByUser"]);
     Route::get("/card/{id}", [CardController::class, "show"]);
     Route::get("/user-cards/{id}", [CardController::class, "getDetailCardByUser"]);
+    Route::get("/cards/export", [CardController::class, "export"]);
 
     // Batch routes
     Route::get("/batches", [BatchController::class, "index"]);
@@ -47,6 +48,8 @@ Route::middleware("auth:sanctum")->group(function () {
     Route::get("/batches/{id}", [BatchController::class, "show"]);
     Route::put("/batches/{id}", [BatchController::class, "update"]);
     Route::get("/active-batches", [BatchController::class, "getActiveBatches"]);
+    Route::get("/batches/{id}/user-queue", [BatchController::class, "getUserQueue"]);
+    Route::put("/batches/{id}/user-queue", [BatchController::class, "updateUserQueue"]);
 
     // Batch Payment routes
     Route::post("/batch-payments", [BatchPaymentController::class, "store"]);

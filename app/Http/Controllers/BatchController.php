@@ -4,6 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Batch;
 use Illuminate\Http\Request;
+use App\Models\UserBatchQueue;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class BatchController extends Controller
 {
@@ -11,7 +15,6 @@ class BatchController extends Controller
   {
     $query = Batch::query()->withCount('cards');
 
-    // Optional filter by status
     if ($request->has('status')) {
       $status = $request->query('status');
       if ($status === 'active') {
@@ -75,5 +78,112 @@ class BatchController extends Controller
       ->get();
 
     return response()->json($activeBatches);
+  }
+
+  public function getUserQueue(int $id): JsonResponse
+  {
+    try {
+      $batch = Batch::findOrFail($id);
+
+      $userQueues = UserBatchQueue::where('batch_id', $id)
+        ->with(['user:id,name,email'])
+        ->orderBy('queue_order')
+        ->get();
+
+      $submissions = DB::table('cards')
+        ->where('batch_id', $id)
+        ->get()
+        ->groupBy('user_id');
+
+      $result = $userQueues->map(function ($queue) use ($submissions) {
+        return [
+          'queue_order' => $queue->queue_order,
+          'user' => $queue->user,
+          'submissions' => $submissions->get($queue->user_id, collect())->values()->toArray(),
+          'submission_count' => $submissions->get($queue->user_id, collect())->count()
+        ];
+      });
+
+      return response()->json([
+        'success' => true,
+        'data' => [
+          'batch' => $batch,
+          'user_queues' => $result
+        ]
+      ]);
+    } catch (\Exception $e) {
+      return response()->json([
+        'success' => false,
+        'message' => 'Failed to fetch user queue: ' . $e->getMessage()
+      ], 500);
+    }
+  }
+
+  public function updateUserQueue(int $id, Request $request): JsonResponse
+  {
+    try {
+      $request->validate([
+        'user_ids' => 'required|array|min:1',
+        'user_ids.*' => 'required|integer|exists:users,id'
+      ]);
+
+      $batch = Batch::findOrFail($id);
+      $userIds = $request->input('user_ids');
+
+      DB::beginTransaction();
+
+      $existingQueues = UserBatchQueue::where('batch_id', $id)
+        ->whereIn('user_id', $userIds)
+        ->pluck('user_id')
+        ->toArray();
+
+      $missingUsers = array_diff($userIds, $existingQueues);
+      if (!empty($missingUsers)) {
+        throw ValidationException::withMessages([
+          'user_ids' => ['Some users are not found in this batch: ' . implode(', ', $missingUsers)]
+        ]);
+      }
+
+      // Update queue orders based on array index
+      foreach ($userIds as $index => $userId) {
+        UserBatchQueue::where('batch_id', $id)
+          ->where('user_id', $userId)
+          ->update(['queue_order' => $index + 1]);
+      }
+
+      DB::commit();
+
+      return $this->getUserQueue($id);
+    } catch (ValidationException $e) {
+      DB::rollBack();
+      return response()->json([
+        'success' => false,
+        'message' => 'Validation failed',
+        'errors' => $e->errors()
+      ], 422);
+    } catch (\Exception $e) {
+      DB::rollBack();
+      return response()->json([
+        'success' => false,
+        'message' => 'Failed to update user queue: ' . $e->getMessage()
+      ], 500);
+    }
+  }
+
+  public function addUserToBatchQueue(int $userId, int $batchId): void
+  {
+    $existingQueue = UserBatchQueue::where('user_id', $userId)
+      ->where('batch_id', $batchId)
+      ->first();
+
+    if (!$existingQueue) {
+      $nextOrder = UserBatchQueue::getNextQueueOrder($batchId);
+
+      UserBatchQueue::create([
+        'user_id' => $userId,
+        'batch_id' => $batchId,
+        'queue_order' => $nextOrder
+      ]);
+    }
   }
 }

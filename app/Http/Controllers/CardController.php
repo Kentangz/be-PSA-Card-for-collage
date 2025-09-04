@@ -5,13 +5,14 @@ namespace App\Http\Controllers;
 use App\Models\Card;
 use App\Exports\CardsExport;
 use Illuminate\Http\Request;
+use App\Models\UserBatchQueue;
 use Maatwebsite\Excel\Facades\Excel;
 
 class CardController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Card::with(["latestStatus", "statuses", "batch", "certificates"]);
+        $query = Card::with(["latestStatus", "statuses", "batch", "certificates","user:id,name,email"]);
 
         if ($request->has('status')) {
             $status = $request->query('status');
@@ -65,8 +66,6 @@ class CardController extends Controller
             "name" => "required|string",
             "year" => "required|integer",
             "brand" => "required|string",
-            // "serial_number" => "nullable|string",
-            // "grade_target" => "required|string",
             "batch_id" => "required|exists:batches,id",
         ]);
 
@@ -81,6 +80,22 @@ class CardController extends Controller
         $card = Card::query()->create($validated);
 
         $card->statuses()->create(["status" => "submit"]);
+
+        if ($card->batch_id) {
+            $existingQueue = UserBatchQueue::where('user_id', $card->user_id)
+                ->where('batch_id', $card->batch_id)
+                ->first();
+
+            if (!$existingQueue) {
+                $nextOrder = UserBatchQueue::getNextQueueOrder($card->batch_id);
+
+                UserBatchQueue::create([
+                    'user_id' => $card->user_id,
+                    'batch_id' => $card->batch_id,
+                    'queue_order' => $nextOrder
+                ]);
+            }
+        }
 
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $image) {

@@ -48,7 +48,7 @@ class AuthController extends Controller
         if ($request->user()->is_active == false) {
             return response()->json([
                 'message' => 'Login failed: your account has been deactivate',
-            ], 400);
+            ], 403);
         }
 
         $token = $request->user()->createToken('token')->plainTextToken;

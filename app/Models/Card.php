@@ -15,7 +15,7 @@ class Card extends Model
         "year",
         "brand",
         "serial_number",
-        "grade_target",
+        // "grade_target",
         "user_id",
         "batch_id",
         "grade",
