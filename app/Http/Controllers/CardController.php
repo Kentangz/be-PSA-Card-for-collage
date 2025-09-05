@@ -133,7 +133,7 @@ class CardController extends Controller
 
         if ($request->has('certificates')) {
             $rules['certificates'] = 'array';
-            $rules['certificates.*.cert_url'] = 'required|url';
+            $rules['certificates.*.cert_url'] = 'required|';
         }
 
         $validated = $request->validate($rules);
