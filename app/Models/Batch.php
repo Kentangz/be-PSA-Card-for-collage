@@ -24,6 +24,11 @@ class Batch extends Model
     return $this->hasMany(Card::class);
   }
 
+  public function queueEntries()
+  {
+    return $this->hasMany(BatchQueueEntry::class);
+  }
+
   protected static function boot()
   {
     parent::boot();

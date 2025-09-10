@@ -18,6 +18,7 @@ class Card extends Model
         // "grade_target",
         "user_id",
         "batch_id",
+        "queue_entry_id",
         "grade",
         "payment_url"
     ];
@@ -40,6 +41,11 @@ class Card extends Model
     public function batch()
     {
         return $this->belongsTo(Batch::class);
+    }
+
+    public function queueEntry()
+    {
+        return $this->belongsTo(BatchQueueEntry::class, 'queue_entry_id');
     }
 
     public function images()

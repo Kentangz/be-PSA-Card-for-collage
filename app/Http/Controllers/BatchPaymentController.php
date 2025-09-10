@@ -62,6 +62,9 @@ class BatchPaymentController extends Controller
         try {
             $batch = Batch::findOrFail($batchId);
 
+            // First, sync data from batch_queue_entries to batch_payments
+            $this->syncFromQueueEntries($batchId);
+
             $batchPayments = BatchPayment::where('batch_id', $batchId)
                 ->with(['user', 'batch'])
                 ->get();
@@ -83,6 +86,43 @@ class BatchPaymentController extends Controller
                 'message' => 'Failed to fetch batch payments',
                 'error' => $e->getMessage()
             ], 500);
+        }
+    }
+
+    private function syncFromQueueEntries(int $batchId): void
+    {
+        // Get all queue entries for this batch that have payment data
+        $queueEntries = \App\Models\BatchQueueEntry::where('batch_id', $batchId)
+            ->whereNotNull('payment_url')
+            ->get();
+
+        foreach ($queueEntries as $entry) {
+            // Check if batch payment already exists
+            $batchPayment = BatchPayment::where('batch_id', $batchId)
+                ->where('user_id', $entry->user_id)
+                ->first();
+
+            if ($batchPayment) {
+                // Update existing batch payment with queue entry data
+                $batchPayment->update([
+                    'payment_url' => $entry->payment_url,
+                    'is_sent' => $entry->is_sent,
+                    'sent_at' => $entry->is_sent ? now() : null,
+                ]);
+            } else {
+                // Create new batch payment from queue entry data
+                $batchPayment = BatchPayment::create([
+                    'batch_id' => $batchId,
+                    'user_id' => $entry->user_id,
+                    'payment_url' => $entry->payment_url,
+                    'is_sent' => $entry->is_sent,
+                    'sent_at' => $entry->is_sent ? now() : null,
+                ]);
+            }
+
+            // Calculate total submissions and update payment URLs
+            $batchPayment->calculateTotalSubmissions();
+            $batchPayment->updateSubmissionPaymentUrls();
         }
     }
 

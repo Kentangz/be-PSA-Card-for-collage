@@ -7,6 +7,7 @@ use App\Http\Controllers\CardController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\StatusController;
 use App\Http\Controllers\BatchPaymentController;
+use App\Http\Controllers\BatchQueueEntryController;
 use App\Http\Controllers\CardDeliveryProofController;
 use App\Http\Controllers\BatchController;
 
@@ -48,16 +49,13 @@ Route::middleware("auth:sanctum")->group(function () {
     Route::get("/batches/{id}", [BatchController::class, "show"]);
     Route::put("/batches/{id}", [BatchController::class, "update"]);
     Route::get("/active-batches", [BatchController::class, "getActiveBatches"]);
-    Route::get("/batches/{id}/user-queue", [BatchController::class, "getUserQueue"]);
-    Route::put("/batches/{id}/user-queue", [BatchController::class, "updateUserQueue"]);
 
-    // Batch Payment routes
-    Route::post("/batch-payments", [BatchPaymentController::class, "store"]);
-    Route::get("/batch-payments/batch/{batchId}", [BatchPaymentController::class, "getByBatch"]);
-    Route::get("/batch-payments/{id}", [BatchPaymentController::class, "show"]);
-    Route::put("/batch-payments/{id}/send", [BatchPaymentController::class, "sendPaymentLink"]);
-    Route::delete("/batch-payments/{id}", [BatchPaymentController::class, "destroy"]);
-    Route::get("/batch-payments-pending", [BatchPaymentController::class, "getPendingPayments"]);
+    // entry-based queue 
+    Route::post('/batches/{id}/entries', [BatchQueueEntryController::class, 'store']);
+    Route::get('/batches/{id}/entries', [BatchQueueEntryController::class, 'indexByBatch']);
+    Route::patch('/batches/{id}/entries/order', [BatchQueueEntryController::class, 'reorder']);
+    Route::get('/entries/{entryId}', [BatchQueueEntryController::class, 'show']);
+    Route::post('/entries/{entryId}/payment-set-send', [BatchQueueEntryController::class, 'setAndSendPayment']);
 
     // Status routes
     Route::post("/status", [StatusController::class, "store"]);
@@ -66,4 +64,12 @@ Route::middleware("auth:sanctum")->group(function () {
     Route::post('/card/{id}/delivery-proof', [CardDeliveryProofController::class, 'store']);
     Route::get('/card/{id}/delivery-proof', [CardDeliveryProofController::class, 'show']);
     Route::delete('/card/{cardId}/delivery-proof/{proofId}', [CardDeliveryProofController::class, 'destroy']);
+
+    // Batch payment routes
+    Route::get('/batch-payments/batch/{batchId}', [BatchPaymentController::class, 'getByBatch']);
+    Route::get('/batch-payments/{id}', [BatchPaymentController::class, 'show']);
+    Route::post('/batch-payments', [BatchPaymentController::class, 'store']);
+    Route::put('/batch-payments/{id}/send', [BatchPaymentController::class, 'sendPaymentLink']);
+    Route::delete('/batch-payments/{id}', [BatchPaymentController::class, 'destroy']);
+    Route::get('/batch-payments-pending', [BatchPaymentController::class, 'getPendingPayments']);
 });

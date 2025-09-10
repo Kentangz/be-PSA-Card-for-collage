@@ -61,14 +61,9 @@ class User extends Authenticatable implements CanResetPassword
         return $this->hasMany(Card::class);
     }
 
-    public function batchPayments()
+    public function queueEntries()
     {
-        return $this->hasMany(BatchPayment::class);
-    }
-
-    public function getPaymentForBatch($batchId)
-    {
-        return $this->batchPayments()->where('batch_id', $batchId)->first();
+        return $this->hasMany(BatchQueueEntry::class);
     }
 
     public function submissionsInBatch($batchId)

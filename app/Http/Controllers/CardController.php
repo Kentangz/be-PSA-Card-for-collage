@@ -5,14 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\Card;
 use App\Exports\CardsExport;
 use Illuminate\Http\Request;
-use App\Models\UserBatchQueue;
 use Maatwebsite\Excel\Facades\Excel;
 
 class CardController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Card::with(["latestStatus", "statuses", "batch", "certificates","user:id,name,email"]);
+        $query = Card::with(["latestStatus", "statuses", "batch", "certificates", "user:id,name,email"]);
 
         if ($request->has('status')) {
             $status = $request->query('status');
@@ -67,6 +66,8 @@ class CardController extends Controller
             "year" => "required|integer",
             "brand" => "required|string",
             "batch_id" => "required|exists:batches,id",
+            "images" => "required|array|min:1",
+            "images.*" => "required|file|image",
         ]);
 
         $batch = \App\Models\Batch::findOrFail($validated['batch_id']);
@@ -81,30 +82,12 @@ class CardController extends Controller
 
         $card->statuses()->create(["status" => "submit"]);
 
-        if ($card->batch_id) {
-            $existingQueue = UserBatchQueue::where('user_id', $card->user_id)
-                ->where('batch_id', $card->batch_id)
-                ->first();
+        foreach ($request->file('images') as $image) {
+            $path = $image->store('card-images', 'public');
 
-            if (!$existingQueue) {
-                $nextOrder = UserBatchQueue::getNextQueueOrder($card->batch_id);
-
-                UserBatchQueue::create([
-                    'user_id' => $card->user_id,
-                    'batch_id' => $card->batch_id,
-                    'queue_order' => $nextOrder
-                ]);
-            }
-        }
-
-        if ($request->hasFile('images')) {
-            foreach ($request->file('images') as $image) {
-                $path = $image->store('card-images', 'public');
-
-                $card->images()->create([
-                    'path' => $path
-                ]);
-            }
+            $card->images()->create([
+                'path' => $path
+            ]);
         }
 
         $card->load(['batch:id,batch_number,register_number,services,category']);
