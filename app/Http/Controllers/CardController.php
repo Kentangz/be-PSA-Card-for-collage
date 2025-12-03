@@ -66,7 +66,7 @@ class CardController extends Controller
             "year" => "required|integer",
             "brand" => "required|string",
             "batch_id" => "required|exists:batches,id",
-            "images" => "required|array|min:1",
+            "images" => "required|array|min:1|max:5000",
             "images.*" => "required|file|image",
         ]);
 
